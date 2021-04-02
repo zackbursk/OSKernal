@@ -14,3 +14,6 @@ lex.yy.c: lex.l
 
 y.tab.c: yacc.y
 	yacc -d yacc.y
+
+clean:
+	rm y.tab.c y.tab.h lex.yy.c shell
