@@ -63,3 +63,41 @@ int listalias(){
         printf("%s\n", aTable[i++][1]);
     }
 }
+
+int addEnv(char* var, char* value) {
+
+    for (int i = 0; i < MAX_ENV; i++) {
+        // Check if the env variable exists, update if true
+        if (i < envCount && strcmp(envTable[i][0],var) == 0) {
+            envTable[i][1] = value;
+            break;
+        }
+        // If variable doesn't exist, add to end of list
+        else if (i == envCount) {
+            envCount++;
+            envTable[i][0] = var;
+            envTable[i][1] = value;
+            break;
+        }
+    }
+}
+
+int printEnv() {
+    for (int i = 0; i < envCount; i++) {
+        // Print all env's that have not been removed (non-empty strings)
+        if (strcmp(envTable[i][0],""))
+            printf("%s=%s\n", envTable[i][0], envTable[i][1]);
+    }
+}
+
+int unSetEnv(char* var) {
+    for (int i = 0; i < envCount; i++) {
+        if (!strcmp(envTable[i][0], var)) {
+            // sets a removed env to an empty string
+            envTable[i][0] = "";
+            envTable[i][1] = "";
+        }
+    
+    }
+
+}

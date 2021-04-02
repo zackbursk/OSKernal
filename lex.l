@@ -13,7 +13,7 @@
 
 CHAR            [.A-Za-z0-9!\/_-][.A-Za-z0-9!\/_-]*
 ANYCHAR            [)(*&%$#@!`;,\.a-zA-Z0-9'/*_=~ -][)(*&%$#@!`;,\.a-zA-Z0-9'/*_=~ -]*
-WORD		[A-Za-z0-9{}$_/\-]
+WORD		[A-Za-z0-9{}$_/\-.:~]
 COMMAND		\"[A-Za-z0-9<>|[:space:]_/\-]+\"
 
 %%
@@ -26,6 +26,9 @@ bye                 { return BYE; }
 cd		            { return CD;}
 alias		        { return ALIAS; }
 unalias		        { return UNALIAS; }
+setenv				{ return SETENV; }
+printenv			{ return PRINTENV; }
+unsetenv			{ return UNSETENV; }
 \n          return NEW_LINE;
 [\"]                 { BEGIN(string_condition); }
 [..]    { return DOT_DOT; }

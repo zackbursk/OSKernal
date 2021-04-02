@@ -43,7 +43,7 @@ commands:
      };
 
 command:
-    cd|new_line|alias_case|unalias_case|bye;
+    cd|new_line|alias_case|unalias_case|setenv|printenv|unsetenv|bye;
 
 cd:
     |CD NEW_LINE{
@@ -69,7 +69,7 @@ cd:
 
         char* input = $2;
         if(chdir(input) == -1){
-            printf("%s is not a valid directory", input);
+            printf("%s is not a valid directory\n", input);
         }
         else{
                 printf("Set directory to %s\n", input);
@@ -107,12 +107,37 @@ unalias_case:
     unalias($2);
     };
 
+setenv:
+    SETENV NEW_LINE{
+        printf("Error: No variable or value was entered\n");
+    };
+    |SETENV WORD NEW_LINE{
+        printf("Error: No value entered for variable %s. Nothing was added.\n", $2);
+    };
+    |SETENV WORD WORD NEW_LINE{
+        char* variable = $2;
+        char* value = $3;
+        addEnv(variable,value);
+    };
+printenv:
+    PRINTENV NEW_LINE{
+        printEnv();
+    }
+unsetenv:
+    UNSETENV NEW_LINE{
+        printf("error: no variable entered to remove\n");
+    }
+    |UNSETENV WORD NEW_LINE{
+        unSetEnv($2);
+    }
+
 bye:
 	BYE
 	{
 		printf("Shutting Down\n");
 		exit(0);
 	};
+    
 
 %%
 
