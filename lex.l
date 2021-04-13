@@ -1,38 +1,35 @@
 %{
-// This is ONLY a demo micro-shell whose purpose is to illustrate the need for and how to handle nested alias substitutions and how to use Flex start conditions.
-// This is to help students learn these specific capabilities, the code is by far not a complete nutshell by any means.
-// Only "alias name word", "cd word", and "bye" run.
+#include <stdio.h>
 #include "y.tab.h"
-#include <string.h>
 #include "helpers.h"
-
 %}
-%array
-%option noyywrap
-%x string_condition
-
 CHAR            [.A-Za-z0-9!\/_-][.A-Za-z0-9!\/_-]*
 ANYCHAR            [)(*&%$#@!`;,\.a-zA-Z0-9'/*_=~ -][)(*&%$#@!`;,\.a-zA-Z0-9'/*_=~ -]*
 WORD		[A-Za-z0-9{}$_/\-.:~]
 COMMAND		\"[A-Za-z0-9<>|[:space:]_/\-]+\"
-
 %%
 
-<string_condition>{ANYCHAR}+     { yylval.string = strdup(yytext); return STRING;}
-<string_condition>[\"]          {BEGIN(INITIAL);}
-
-[ ]		            { }
-bye                 { return BYE; }
-cd		            { return CD;}
-alias		        { return ALIAS; }
-unalias		        { return UNALIAS; }
-setenv				{ return SETENV; }
-printenv			{ return PRINTENV; }
-unsetenv			{ return UNSETENV; }
-\n          return NEW_LINE;
-[\"]                 { BEGIN(string_condition); }
-[..]    { return DOT_DOT; }
-{COMMAND}		{yylval.string = strdup(yytext); return COMMAND;};
+bye						return BYE;
+cd						return CD;
+alias						return ALIAS;
+unalias						return UNALIAS;
+setenv						return SETENV;
+unsetenv					return UNSETENV;
+printenv					return PRINTENV;
+"|"                         return PIPE;
 {WORD}+			{yylval.string = strdup(yytext); return WORD;};
+"\n"						return 0;
+\".*\" {
+    yylval.string = (char*)calloc(strlen(yytext)-1, sizeof(char));
+    strncpy(yylval.string, &yytext[1], strlen(yytext)-2);
+    return WORD;
+}
+
 %%
 
+void scan_string(char* str)
+{
+    yy_switch_to_buffer(yy_scan_string(str));
+    yyparse();
+    yylex_destroy();
+}

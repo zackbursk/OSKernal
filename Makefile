@@ -10,7 +10,7 @@ y.tab.o: y.tab.c
 	cc -c y.tab.c
 
 lex.yy.c: lex.l
-	lex lex.l
+	lex -d lex.l
 
 y.tab.c: yacc.y
 	yacc -d yacc.y
