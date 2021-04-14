@@ -11,8 +11,6 @@
 #define getHOME getenv("HOME")
 #define getPWD getenv("PWD")
 
-
-
 #define MAXCMDS 50
 #define MAXARGS 300
 #define MAXALIAS 100
@@ -30,10 +28,11 @@ typedef struct aliasS {
 } aliasS;
 
 typedef struct com {
-    char   *commandName;
+    char   *name;
     int     checkExternal;
     int     numArgs;
-    char *atptr[50];
+    int     numCommands;
+    char *atThis[50];
 }  com;
 
 extern aliasS       aTable[];

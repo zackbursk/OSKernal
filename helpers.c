@@ -9,6 +9,7 @@ aliasS aTable[MAXALIAS];
 com commandTable[MAXCMDS];
 //int for the current command in the table
 int currentCommand;
+int numCommands;
 //count of alias
 int aliasCount;
 //root alias
@@ -18,10 +19,12 @@ typedef int BOOL;
 #define TRUE 1
 #define FALSE 0
 
+#define READ_END 0
+#define WRITE_END 1
+
 void listalias() {
     //iterate through table printing all values
-    int i = 0;
-    for(i; i<aliasCount; i++) {
+    for(int i = 0; i<aliasCount; i++) {
         printf("%s = %s\n", aTable[i].name, aTable[i].word);
     }
 }
@@ -144,36 +147,33 @@ int unSetEnv(char* var) {
     }
 }
 
-int isalias(char *name) {
-    int found = -1;
-    int i = 0;
-    //basically print alias without printing (returns 1 if found, 0 if not found
-    for(i; i<aliasCount; i++) {
-        if(strcmp(name, aTable[i].name) == 0) {
-            found = i;
-            break;
-        }
-    }
-    return found;
-}
-
 void executeOther(void) {
-    int curr = currentCommand % MAXCMDS;
+    int iCommand = currentCommand;
     char pwd[5000];
     //if its a build in command, it's executed outside of this function
-    if(commandTable[curr].checkExternal == 0) {
+    if(commandTable[iCommand].checkExternal == 0) {
         return;
     }
     else {
+        int found = -1;
+        int i = 0;
+        //basically print alias without printing (returns 1 if found, 0 if not found
+        for(i; i<aliasCount; i++) {
+            if(strcmp(commandTable[iCommand].name, aTable[i].name) == 0) {
+                found = i;
+                break;
+            }
+        }
         //check if inputted command is an alias:
-        if(isalias(commandTable[curr].commandName) != -1) {
-            commandTable[curr].checkExternal = 0;
+        if(found != -1) {
+            commandTable[iCommand].checkExternal = 0;
             if(aRoot == NULL) {
-                aRoot = aTable[isalias(commandTable[curr].commandName)].name;
+                aRoot = aTable[found].name;
             }
             //parse the string for the alias command (the word specified by the user)
             //basically execute the alias command by calling yyparse again
-            scan_string(aTable[isalias(commandTable[curr].commandName)].word);
+            //http://westes.github.io/flex/manual/Multiple-Input-Buffers.html#Scanning-Strings
+            scan_string(aTable[found].word);
             //execute alias command
             executeOther();
         }
@@ -202,19 +202,23 @@ void executeOther(void) {
             else if(child == 0) {
                 //set up path to call external command
                 char tmp[256];
-                //get environment variable PATH for the command
-                char *path = strcpy(tmp, getenv("PATH"));
+                char *token;
+                char *path;
+                char *pth = getenv("PATH");
+                //adds PATH for the command to array
+                path = strcpy(tmp, pth);
                 //breaks the path into tokens
-                char *token = strtok(path, ":");
+                //https://wiki.sei.cmu.edu/confluence/pages/viewpage.action?pageId=87152063
+                token = strtok(path, ":");
 
-                while(token) {
+                while(token != NULL) {
                     char temp2[255];
                     //If trying to run a specified command (i.e. "./testdir/test.o")
                     char *cmp = "./";
                     //check if first part of command matches "." or "/"
-                    if(commandTable[curr].commandName[0] == cmp[0] || commandTable[curr].commandName[0] == cmp[1]) {
+                    if(commandTable[iCommand].name[0] == cmp[0] || commandTable[iCommand].name[0] == cmp[1]) {
                         //if it does match copy the command name to the temp array
-                        strcpy(temp2, commandTable[curr].commandName);
+                        strcpy(temp2, commandTable[iCommand].name);
                     }
                     else {
                         // If destination is not specified
@@ -226,23 +230,23 @@ void executeOther(void) {
                         strcat(temp2, "/");
                         // Append command name to the end command destination
                         //makes it path/CommandName
-                        strcat(temp2, commandTable[curr].commandName);
+
+                        strcat(temp2, commandTable[iCommand].name);
                     }
                     //sets space for any arguments (i.e. -l -ls -lh etc.)
-                    char *commands[commandTable[curr].numArgs + 2];
+                    char *commands[commandTable[iCommand].numArgs + 2];
                     //set first spot in array to path/CommandName
                     commands[0] = temp2;
                     //set rest of space that are not arguemnts to null
-                    commands[commandTable[curr].numArgs + 1] = (char *)NULL;
+                    commands[commandTable[iCommand].numArgs + 1] = (char *)NULL;
 
                     int i = 0;
 
-                    for(i; i<commandTable[curr].numArgs; i++) {
+                    for(i; i<commandTable[iCommand].numArgs; i++) {
                         //add args to commands array
-                        commands[i+1] = commandTable[curr].atptr[i];
+                        commands[i+1] = commandTable[iCommand].atThis[i];
                     }
-
-                    //if execv fails
+                    //checking if execv fails
                     //execv should look like: execv(path/CommandName, args)
                     if(execv(temp2, commands) == -1) {
                         //fill any null spaces
@@ -257,7 +261,7 @@ void executeOther(void) {
                 }
                 //if fails
                 if(success == -1) {
-                    printf("Command not found: %s\n", commandTable[curr].commandName);
+                    printf("Command not found: %s\n", commandTable[iCommand].name);
                     exit(1);
                 }
             }
@@ -265,9 +269,11 @@ void executeOther(void) {
     }
     //increase command count
     currentCommand += 1;
+    numCommands += 1;
     //reset
     commandTable[currentCommand].checkExternal = 0;
 }
+
 
 
 

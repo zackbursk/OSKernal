@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include "y.tab.h"
 #include "helpers.h"
+#include <pwd.h>
+
+int inQuotes;
+
 %}
 CHAR            [.A-Za-z0-9!\/_-][.A-Za-z0-9!\/_-]*
 ANYCHAR            [)(*&%$#@!`;,\.a-zA-Z0-9'/*_=~ -][)(*&%$#@!`;,\.a-zA-Z0-9'/*_=~ -]*
@@ -22,11 +26,14 @@ printenv					return PRINTENV;
 \".*\" {
     yylval.string = (char*)calloc(strlen(yytext)-1, sizeof(char));
     strncpy(yylval.string, &yytext[1], strlen(yytext)-2);
+    inQuotes = 1;
     return WORD;
 }
 
+
 %%
 
+//http://westes.github.io/flex/manual/Multiple-Input-Buffers.html#Scanning-Strings
 void scan_string(char* str)
 {
     yy_switch_to_buffer(yy_scan_string(str));
