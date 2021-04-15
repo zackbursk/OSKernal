@@ -48,7 +48,7 @@ Completed the following built in commands:
 ### Testing
 ```sh
 $ make
-$ ./nutshell
+$ ./nutshell.o
 ```
 
 
