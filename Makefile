@@ -1,19 +1,17 @@
-all: shell
+# Simple Makefile
 
-shell: y.tab.o lex.yy.o
-	cc lex.yy.o y.tab.o -o shell
+CC=/usr/bin/cc
 
-lex.yy.o: lex.yy.c
-	cc -c lex.yy.c -w
+all:  bison-config flex-config nutshell
 
-y.tab.o: y.tab.c
-	cc -c y.tab.c
+bison-config:
+	bison -d yacc.y
 
-lex.yy.c: lex.l
-	lex lex.l
+flex-config:
+	flex lex.l
 
-y.tab.c: yacc.y
-	yacc -d yacc.y
+nutshell: 
+	$(CC) yacc.tab.c lex.yy.c -o nutshell.o
 
 clean:
-	rm y.tab.c y.tab.h lex.yy.c shell
+	rm yacc.tab.c yacc.tab.h lex.yy.c

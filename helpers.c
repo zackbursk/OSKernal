@@ -137,6 +137,11 @@ int printEnv() {
 }
 
 int unSetEnv(char* var) {
+    char * check = var;
+    if (strcmp(check, "PATH") == 0 || strcmp(check, "HOME") == 0){
+        printf("Can not remove environment variable \"%s\"\n", var);
+        return;
+    }
     for (int i = 0; i < envCount; i++) {
         if (!strcmp(envTable[i][0], var)) {
             // sets a removed env to an empty string
