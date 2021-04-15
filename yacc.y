@@ -46,16 +46,27 @@ char * expTilde(char * input)
     }
     if (expand[0] == '~' && strlen(expand) > 1){
         expand++;
+        char*test = expand;
+        char *token;
+	token = strtok(test, "/");
+	char *token2;
+	token2 = test += strlen(token)+1;
         if(getpwnam(expand) == NULL){
             printf("\"%s\" is not a valid username.\n",expand);
         }
         else{
         //look up the substring in /etc/passwd using getpwnam
         //https://www.mkssoftware.com/docs/man5/struct_passwd.5.asp
+
             struct passwd *p = getpwnam(expand);
             char tmp[5000];
+            char *tmp2 = "";
             strcpy(tmp, "/home/");
-            return strcat(tmp, p->pw_name);
+            strcat(tmp, p->pw_name);
+            strcat(tmp, "/");
+            strcat(tmp, token2);
+            tmp2 = strdup(tmp);
+            return tmp2;
         }
     }
     return expand;

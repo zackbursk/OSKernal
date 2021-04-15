@@ -22,6 +22,7 @@
 char * envTable[MAX_ENV][2];
 int envCount;
 
+//https://overiq.com/c-programming-101/array-of-structures-in-c/
 typedef struct aliasS {
     char  *name;
     char  *word;

@@ -151,6 +151,7 @@ void executeOther(void) {
     int iCommand = currentCommand;
     char pwd[5000];
     //if its a build in command, it's executed outside of this function
+    //doesn't do anything, but breaks aliasing if removed?
     if(commandTable[iCommand].checkExternal == 0) {
         return;
     }
@@ -166,10 +167,6 @@ void executeOther(void) {
         }
         //check if inputted command is an alias:
         if(found != -1) {
-            commandTable[iCommand].checkExternal = 0;
-            if(aRoot == NULL) {
-                aRoot = aTable[found].name;
-            }
             //parse the string for the alias command (the word specified by the user)
             //basically execute the alias command by calling yyparse again
             //http://westes.github.io/flex/manual/Multiple-Input-Buffers.html#Scanning-Strings
