@@ -35,12 +35,14 @@ Completed the following built in commands:
 *  bye 
 *  infinite loop alias-expansion detection
 
-Completed the execute_other function which allows for **alias expansion** as well as **non-built in commands** to be executed through excev.
+Completed the execute_other function which allows for **alias expansion** as well **all non-built in commands** to be executed through excev.
 Completed **Environment Variable Expansion** and **Tilde Expansion (Extra Credit)**.
 
 **Joshua Morin**:
-
-
+Completed the following built in commands:
+*  setenv
+*  printenv
+*  unsetenv
 
 
 ### Testing
