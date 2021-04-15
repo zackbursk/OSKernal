@@ -1,6 +1,6 @@
 %{
 #include <stdio.h>
-#include "y.tab.h"
+#include "yacc.tab.h"
 #include "helpers.h"
 #include <pwd.h>
 
