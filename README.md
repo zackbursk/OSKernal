@@ -5,6 +5,7 @@
 * Wildcard Matching
 * Running Non-built-in Commands in Background
 * Using both Pipes and I/O Redirection, combined, with Non-built-in Commands
+* Redirecting I/O with Non-built-in Commands
 * File Name Completion (Extra Credit)
 
 # Features Implemented
@@ -20,7 +21,6 @@
     *  infinite loop alias-expansion detection
 * Non-built-in Commands
     * Any non-built in command found in the path works (with and without arguments) 
-* Redirecting I/O with Non-built-in Commands (?)
 * Environment Variable Expansion
 * Alias Expansion
 * Tilde Expansion (Extra Credit)
@@ -35,7 +35,7 @@ Completed the following built in commands:
 *  bye 
 *  infinite loop alias-expansion detection
 
-Completed the execute_other function which allows for **alias expansion** as well **all non-built in commands** to be executed through excev.
+Completed the execute_other function which allows for **alias expansion** as well **all non-built in commands (ls,mkdir,ping,etc.)** to be executed through excev.
 Completed **Environment Variable Expansion** and **Tilde Expansion (Extra Credit)**.
 
 **Joshua Morin**:
@@ -48,7 +48,7 @@ Completed the following built in commands:
 ### Testing
 ```sh
 $ make
-$ ./nutshell
+$ ./nutshell.o
 ```
 
 
