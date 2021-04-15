@@ -29,7 +29,11 @@ int yywrap(){
 char * expTilde(char * input)
 {
     char * expand = input;
+    printf("%s",expand);
     int i;
+    if (strcmp(expand, ".") == 0){
+    	return expand;
+    	}
     if (strlen(expand) == 1) {
 	char *test = expand += 1;
 	return getenv("HOME");
